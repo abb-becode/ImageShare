@@ -2,7 +2,9 @@
 
   namespace App\Http\Controllers;
 
+  //use App\Http\Requests\PostRequest;
   use App\Models\Post;
+  use Illuminate\Support\Str;
   use Illuminate\Validation\Rule;
   use Illuminate\Http\Request;
 
@@ -31,6 +33,7 @@
       }
 
       public function store()
+      //public function store(PostRequest $postRequest)
       {
         //ddd(request()->all());
 
@@ -64,10 +67,26 @@
         $attributes['thumbnail'] = request()->file('thumbnail')->store('thumbnails');*/
 
         /** with var  $attributes */
+        //request()->slug = Str::slug(request()->title, '-');
         $attributes = array_merge($this->validatePost(), [
           'user_id' => request()->user()->id,
           'thumbnail' => request()->file('thumbnail')->store('thumbnails'),
         ]);
+
+
+        //$postRequest = new PostRequest();
+        //$attributes = array_merge($postRequest->validate(), [
+        //$attributes = $postRequest->rules();
+//        $attributes = [
+//          'title' => $postRequest['title'],
+//          'slug' => $postRequest['slug'],
+//          'excerpt' => $postRequest['excerpt'],
+//          'body' => $postRequest['body'],
+//          'category_id' => $postRequest['category_id'],
+//          'user_id' => request()->user()->id,
+//          'thumbnail' => request()->file('thumbnail')->store('thumbnails'),
+//        ];
+        //]);
 
         Post::create($attributes);
 
@@ -108,6 +127,7 @@
         ]);*/
 
         $attributes = $this->validatePost($post);
+        //$attributes = $postRequest->rules($post);
 
         // if (isset($attributes['thumbnail'])) {
         /** using null safe operator */
@@ -133,6 +153,12 @@
     {
       /** if we have a post we want to use that, if no we create a new one */
       $post ??= new Post();
+
+      //$post->title = request()->title;
+      //$post->slug = Str::slug($post->title, '-');
+      //ddd('end', $post->slug);
+      //$title = request()->title;
+      //$post->slug = Str::slug($title);
 
       return request()->validate([
         'title' => 'required',
